@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.css">
+    <script src="static/jquery-3.2.0.js"></script>
+    <script src="static/easyui/jquery.easyui.min.js"></script>
+    <script src="static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="static/bootstrap/js/bootstrap.js"></script>
+    <title>欢迎来到买菜页面</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        #div2 {
+            background: greenyellow;
+            position: absolute;
+        }
+
+        #div2 ul li {
+            padding: 0 8px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+    </style>
+    <!--<script src="cookie.js"></script>-->
+    <script>
+
+        window.onload = function () {
+            var oDiv = document.getElementById('div4');
+            var oul = oDiv.getElementsByTagName('ul')[0];
+            var aLi = oul.getElementsByTagName('li');
+
+            oul.innerHTML = oul.innerHTML + oul.innerHTML;
+
+            var speed = -2;
+            oul.style.width = aLi[0].offsetWidth * aLi.length + 'px';
+
+            var time;
+
+            function sn() {
+                //当右移动
+
+                if (oul.offsetLeft < -oul.offsetWidth / 2) {
+
+                    oul.style.left = 0 + 'px';
+                }
+                oul.style.left = oul.offsetLeft + speed + 'px';
+            }
+
+            time = setInterval(sn, 30);
+
+
+        }
+
+    </script>
+</head>
+<body>
+<script>
+    $(function () {
+        $("#foodDataGrid").datagrid({
+            url: '/mall/list',
+            iconCls: 'icon-save',
+            striped: "true",
+            pagination: 'true',
+            pageSize: 4,
+            pageList: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
+            fit: true,
+            fitColumns: true,
+            nowrap: false,
+            border: false,
+            isField: 'id',
+            sortName: 'id',
+            toolbar: [{
+                iconCls: 'icon-remove',
+                text: '购买',
+                handler: function () {
+                    BtnItem();
+                }
+            }],
+            sortOrder: 'asc',
+            columns: [[{title: '菜品编号', field: 'id', width: 30, sortable: 'true'},
+                {title: '卖家编号', field: "sellid", width: 30, sortanle: 'true'},
+                {
+                    title: '美食图片',
+                    field: 'foodimg',
+                    align: 'center',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return '<img width="90px" height="90px" src="' + row.foodimg + '" />';
+                    }
+                },
+                {title: '美食名称', field: 'foodname', width: 100, sortable: 'true'},
+                {title: '美食价格', field: 'foodprice', width: 100, sortable: 'true'},
+                {title: '价格类型', field: 'pricetype', width: 100, sortable: 'true'}]]
+        });
+    });
+
+</script>
+<div style="width:100%;height:100% ; " id="div1;">
+    <div style="width:100%;height:20px" id="div2">
+        <div style="position: absolute;right:200px">
+            <ul style="list-style-type: none;">
+                <li style="float: left;padding:0 50px">欢迎光临本店</li>
+                <li style="float: left">|</li>
+                <li style="float: left"><a href="buylogin_admin.html">退出登录</a></li>
+                <li style="float: left">|</li>
+                <li style="float: left"><a href="/user/userCenter.html">用户中心</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="div3" style="width: 230px;height:720px;position:absolute;top:70px;left:230px;border:1px solid greenyellow">
+        <div style="border-bottom: 1px solid ;color:greenyellow;text-align: center"><b>商业公告，立此为据</b></div>
+        <div style="padding:0 5px;font-size:15px">
+            欢迎光临007买菜网,我们的宗旨：便宜、新鲜、免运费、送菜上门，童叟无欺！ <br/>
+            咨询电话：400-9929-007 <br/>
+            订菜电话：021-31378687 <br/>
+            <br/>
+            友情说明： <br/>
+            1、订单金额高于15元，即可免运费送到菜家,低于15元，也仅收2元运费； <br/>
+            2、免费安装菜箱一个，蔬菜直接派送至菜箱，在凌晨派送时不会打扰到您和家人的休息； <br/>
+            3、当天21:00以前下单(若买双汇肉请20:00之前下单)，第二天7:00之前派送到门口菜箱（由于派送时间为凌晨1:00-7:00，因此家门前均需安装菜箱才能收菜，我们上门免费安装，安装咨询电话:400-9929-007）；
+            <br/>
+            4、支持电话订菜，订菜电话：021-31378687； <br/>
+            5、对于新客户，我们免费提供两次在7:00-8:00期间指定时间送货的服务，欢迎新客户前来体验，菜品好不好，订两次就知道了； <br/>
+            <br/>
+            网上买菜新模式，好不好，买一单试试就知道…… <br/>
+        </div>
+        <div style="width:800px;height:127px;position: absolute;left:250px;top:0;overflow:hidden;background: red;border: 1px solid yellowgreen"
+             id="div4">
+            <ul style="position: absolute;top:0;left:0;witdth:800px;height:127px">
+                <li style="list-style-type: none;float:left; width:200px;height:127px"><img src="/store/files/img/home/4.jpg" ></li>
+                <li style="list-style-type: none;float:left;width:200px;height:127px"><img src="/store/files/img/home/5.jpg" ></li>
+                <li style="list-style-type: none;float:left; width:200px;height:127px"><img src="/store/files/img/home/6.jpg" ></li>
+                <li style="list-style-type: none;float:left;width:200px;height:127px"><img src="/store/files/img/home/7.jpg" ></li>
+            </ul>
+        </div>
+        <div style="width: 230px;height:300px;position:absolute;top:780px;left:0px;border:1px solid greenyellow">
+            <div style="border-bottom: 1px solid  greenyellow;color:blue;"><b>公告</b></div>
+            <div style="padding:0 5px;font-size:15px">
+                重要公告——网站暂停营业（会一直更新回答疑问） 2015-04-25<br/>
+                网站部分设备处理 2015-04-25b<br/>
+                菜品派送过程中采用菜箱运输，亲们下次订菜前请将菜箱放在门外 2014-11-02<br/>
+                2014年十一放假通知 2014-09-28<br/>
+                公告：7月份扣退款存根联丢失，若有需退款的订单请亲们联系我们 2014-09-22<br/>
+            </div>
+        </div>
+
+        <div>
+            <div id="tt"
+                 style="position:absolute;left:250px;top:150px;height: 100%;width: 900px;border: 1px solid greenyellow;position: absolute">
+                <table id="foodDataGrid"
+                       style="width: 900px;height: 100%;position: absolute;border:1px solid yellowgreen">
+
+
+                </table>
+                <div id="btn_menu" data-options="iconCls:'icon-add'">购买</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div style="position: absolute;top:1200px;left:0px;height:20px;width: 100%;" border="1px solid red"></div>
+
+</div>
+<script>
+    function BtnItem() {
+        var selections = $('#foodDataGrid').datagrid('getSelections');
+        if (selections.length == 0) {
+            $.messager.alert("提示", "请选中一个购买菜品");
+        }
+        else if (selections.length > 1) {
+            $.messager.alert("提示", "打折促销！！！！一次只能买一种商品");
+        }
+        else {
+            var selection = selections[0];
+            var id1 = selection.id;
+            var sellid = selection.sellid;
+            var foodname1 = selection.foodname;
+            var foodprice1 = selection.foodprice;
+            var foodnumber = 1
+            $.ajax({
+                url: "/addtobuycar",//提交数据到的地址
+                type: "POST",
+                data: {id: id1, foodname: foodname1, foodprice: foodprice1, foodnumber: foodnumber, sellid: sellid},
+                success: function (msg) {
+                    $.messager.alert("提示", msg.msg, null, function () {
+                        if (msg.state == 'ok') {
+                            $('#foodDataGrid').datagrid('reload');
+                        }
+                    })
+                }
+            })
+        }
+
+    }
+</script>
+</body>

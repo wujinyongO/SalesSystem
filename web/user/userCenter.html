@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    <title>用户中心</title>
+</head>
+<body>
+<h style="font-size: 35px;position: absolute;top:100px;left:100px"><b>用户中心</b></h>
+<div id="tt" class="easyui-tabs" style="width:750px;height:500px;margin: 150px auto;">
+    <div title="用户信息" style="padding:20px;display:none;eoverflow:auto;">
+        <p>个人资料</p>
+        <form action="" style="text-align: center" id="perForm">
+            <p> 性别：<input type="radio" name="sex" checked >保密
+                <input type="radio">男
+                <input type="radio">女</p><br/>
+            <p>家庭电话：<input type="text" name="telphone" id="honumber"></p><br>
+            <p>手机号码：<input type="text" name="phone" id="phonenu"></p><br>
+            <p>电子邮箱：<input type="text" name="email" id="email1"></p><br>
+            <button class="btn btn-primary" onclick="BtnClick()">确认修改</button>
+        </form>
+    </div>
+    <div title="收货地址" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+        <p>收货人地址</p>
+        <form action="" style="text-align: center" id="userForm">
+            <p>收货人姓名：<input type="text" name="name" id="username"></p><br>
+            <p>详细地址：<input type="text" name="area1" id="adress"></p><br>
+            <p>邮政编码：<input type="text" name="email1" id="mail"></p><br>
+            <p>手机号码：<input type="text" name="phone1" id="phonenumber"></p><br>
+            <p> <button class="btn btn-primary" onclick="regBtnClick()">确认修改</button>
+            </p><br>
+        </form>
+    </div>
+
+</div>
+<script>
+    function BtnClick() {
+        $('#perForm').form({
+            url:"/userCenter/modifyinfo",//地址
+            onSubmit:function () {
+                if($('#honumber').val().length<1||$('#phonenu').length<1||$('#email1').length<1){
+                    $.messager.alert("提示","所有字段都为必填项");
+                    return false;
+                }
+                if($('#phonenu').val().length!=11){
+                    $.messager.alert("提示","请输入正确的手机号");
+                    return false;
+                }
+            },
+            success:function(data){
+                var jsonData = JSON.parse(data);
+                $.messager.alert('提示', jsonData.msg, null, function () {
+                });
+            }
+        })
+    }
+    function regBtnClick() {
+        $('#userForm').form({
+            url:"/userCenter/modifyaddr",//这里写传递的地址
+            onSubmit:function(){
+                if($('#username').val().length<1||$('#adress').val().length<1||$('#mail').val().length<1||$('#phonenumber').val().length<1){
+                    $.messager.alert("提示","所有字段都为必填项");
+                    return false;
+                }
+                if($('#phonenumber').val().length!=11){
+                    $.messager.alert("提示","请输入正确的手机号码");
+                    return false;
+                }
+            },
+            success:function(data){
+                var jsonData = JSON.parse(data);
+                $.messager.alert('提示', jsonData.msg, null, function () {
+                });
+            }
+        })
+    }
+</script>
+</body>
+</html>

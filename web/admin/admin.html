@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页面</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="easyui-layout" fit="true">
+    <div data-options="region:'north',split:false" style="padding:0px;height:30px;" align="center">
+        <h4>欢迎来到后台管理页</h4>
+    </div>
+    <div data-options="region:'south',split:false" style="padding:0px;height:30px;" align="center">
+        <h5>版权信息</h5>
+    </div>
+    <div data-options="region:'west',title:'系统菜单',split:true" style="width:200px;">
+        <ul id="tt"></ul>
+    </div>
+    <div data-options="region:'center',title:'主页面'" style="padding:0px;background:#eee;">
+        <div id="tt1" class="easyui-tabs" style="width:100%;height:100%;">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#tt').tree({
+            onClick: function (node) {
+                if ($('#tt1').tabs('exists', node.text)) {
+                    $('#tt1').tabs('select', node.text);
+                } else {
+                    $('#tt1').tabs('add', {
+                        title: node.text,
+                        content: '<iframe frameborder="0" src="' + node.attributes.url + '" width="100%" height="100%"></iframe>',
+                        closable: true,
+                        tools: [{
+                            iconCls: 'icon-mini-refresh',
+                            handler: function () {
+                                alert('refresh');
+                            }
+                        }]
+                    });
+                }
+            },
+            data: [{
+                text: '<strong>订单管理</strong>', attributes: {
+                    url: "order.html"
+                }
+            }, {
+                text: '<strong>菜品管理</strong>', attributes: {
+                    url: "food.html"
+                }
+            }, {
+                text: '<strong>用户中心</strong>', attributes: {
+                    url: "userCenter.html"
+                }
+            }]
+        });
+    });
+</script>
+</body>
+</html>

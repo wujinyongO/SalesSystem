@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<div id="tabs" class="easyui-tabs" fit="true" style="overflow: hidden;width: 100%;height: 100%">
+    <table id="datagrid" style="margin: 0px;padding: 0px;width: 100%;height: 100%" fit="true"></table>
+</div>
+<script>
+    $(function () {
+        $("#datagrid").datagrid({
+            url: '/order/listBySeller',
+            striped: "true",
+            pagination: 'true',
+            pageSize: 10,
+            pageList: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            fit: true,
+            fitColumns: true,
+            nowrap: false,
+            border: false,
+            isField: 'id',
+            sortName: 'id',
+            sortOrder: 'asc',
+            columns: [[{title: '编号', field: 'id', width: 100, sortable: 'true'},
+                {title: '菜品名称', field: 'foodName', width: 100, sortable: 'true'},
+                {title: '用户名称', field: 'userName', width: 100, sortable: 'true'},
+                {title: '菜品数量', field: 'foodNumber', width: 100, sortable: 'true'},
+                {title: '下单时间', field: 'orderTime', width: 100, sortable: 'true'},
+                {title: '取菜时间', field: 'getFoodTime', width: 100, sortable: 'true'}]]
+        });
+    });
+</script>
+</body>
+</html>

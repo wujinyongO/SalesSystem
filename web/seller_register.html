@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>卖菜用户注册页面</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<div id="cc" class="easyui-layout" fit="true">
+    <div data-options="region:'north',split:true" style="height:100px;overflow: hidden;text-align:center; ">
+        <h style="font-size:25px;">卖菜系统用户注册</h>
+    </div>
+    <div data-options="region:'south',split:true" style="height:100px;overflow: hidden"></div>
+    <div data-options="region:'center'" style="padding:5px;background:#eee;">
+        <div align="center">
+            <div id="rid" align="center">
+                <form id="ff" method="post" name="ff" enctype="multipart/form-data">
+                <br align="center">
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 100px">用户名</span>
+                        <input type="text" class="form-control" id="userName" name="userName" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 100px" >密码</span>
+                        <input type="password" class="form-control" id="password" name="password" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 100px" >确认密码</span>
+                        <input type="password" class="form-control"id="password_confirm" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 100px" >窗口名称</span>
+                        <input type="text" class="form-control" id="winName" name="winName" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon"  style="width: 100px">手机号</span>
+                        <input type="text" class="form-control" id="photoNum" name="photoNum" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon"  style="width: 100px">窗口图片</span>
+                        <input type="file" class="form-control" id="winImg" name="winImg" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td >
+                    <div class="input-group">
+                        <span class="input-group-addon"  style="width: 100px">商店地址</span>
+                        <input type="text" class="form-control" id="winAdr" name="winAdr" aria-describedby="basic-addon3" style="width: 250px">
+                    </div>
+                </td>
+                </tr>
+                </br>
+                <tr>
+                <td>
+                    <div align="center">
+                        <button type="button" id="btnName" class="btn btn-primary">注册</button>
+                        <button type="reset" id="reset" class="btn btn-primary">重置</button>
+                    </div>
+                </td>
+                </tr>
+                </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#rid').panel({
+        title: '注册',
+        width: 500,
+        height: 500
+    });
+    $('#btnName').click(function () {
+        $('#ff').form('submit',{
+            url:'/SellerRegist',
+            onSubmit: function(){
+                var username=$('#userName').val();
+                var password=$('#password').val();
+                var password_confirm=$('#password_confirm').val();
+                var winName=$('#winName').val();
+                var photoNum=$('#photoNum').val();
+                var winImg=$('#winImg').val();
+                var winAdr=$('#winAdr').val();
+                if(username.length==0 || password.length==0 || password_confirm.length==0 || winName.length==0 || photoNum.length==0 || winImg.length==0||
+                winAdr.length==0)
+                {
+                    $.messager.alert('提示','所有字段均不能为空');
+                    return false;
+                }
+                if(password_confirm!=password)
+                {
+                    $.messager.alert('提示','两次密码不一致');
+                    return false;
+                }
+                if(photoNum.length!=11)
+                {
+                    $.messager.alert('提示','请输入正确手机号码');
+                    return false;
+                }
+            },
+            success:function(data){
+                var jsonData = JSON.parse(data);
+                $.messager.alert('提示', jsonData.msg, null, function () {
+                    if (jsonData.status === 'ok') {
+                        location.href = 'seller_login.html';
+                    }
+                });
+            }
+         });
+     });
+
+</script>
+</body>
+</html>

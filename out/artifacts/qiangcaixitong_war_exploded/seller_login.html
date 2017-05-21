@@ -1,0 +1,80 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<div id="cc" class="easyui-layout" fit="true">
+    <div data-options="region:'north',split:true" style="height:100px;overflow: hidden;text-align: center">
+        <h style="font-size: 25px;">欢迎来到卖菜系统</h>
+    </div>
+    <div data-options="region:'south',split:true" style="height:100px;overflow: hidden"></div>
+    <div data-options="region:'center'" style="padding:5px;background:url(vegetable.jpg) no-repeat;background-size:100%; " >
+        <div id="dd" >
+            <form id="ff" method="post" name="ff">
+            <div class="input-group">
+                <span class="input-group-addon" style="width: 70px">用户名</span>
+                <input type="text" class="form-control" style="width: 280px" id="username" name="username" aria-describedby="basic-addon3">
+            </div>
+            </br>
+            <div class="input-group">
+                <span class="input-group-addon" style="width: 70px">密码</span>
+                <input type="password" class="form-control" style="width: 280px" id="password" name="password" aria-describedby="basic-addon3">
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $('#dd').dialog({
+        title: '登录',
+        width: 400,
+        height: 200,
+        cache: false,
+        modal: true,
+        closable:false,
+       buttons:[
+           {
+           text:'还没账号?去注册>>',handler:function () {
+                location.href='seller_register.html';
+           }},{
+           text:'登录',handler:function () {
+               $('#ff').form('submit',{
+                   url:'/sellerAuth/login',
+                   onSubmit:function () {
+                       if($('#username').val().length<1||$('#password').val().length<1) {
+                           $.messager.alert('提示', '所有字段均不能为空');
+                           return false;
+                       }
+                       //var check='/^1\d{10}$/';
+                       //alert(check);
+                       //if(!check.text($('#username').val()))
+                       //{
+                       //    $.messager.alert('提示', '请输入正确的手机号码');
+                       //    return false;
+                       //}
+                   },
+                   success:function(data){
+                       var jsonData = JSON.parse(data);
+                       $.messager.alert('提示', jsonData.msg, null, function () {
+                           console.log(data);
+                           if (jsonData.status === 'ok') {
+                               location.href = 'admin/admin.html';
+                           }
+                       });
+                   }
+               })
+           }}]
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户中心</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body >
+<div id="user_win" style="padding: 50px">
+    <table align="center">
+        <tr height="100px">
+            <td width="60px">商店图片</td>
+            <td width="120px" id="user_img"></td>
+            <td>
+                <button class="btn btn-primary btn-xs" role="button" onclick="SetUserImg('user_img');">修改</button>
+            </td>
+        </tr>
+        <tr height="40px">
+            <td width="60px">商店名称</td>
+            <td width="120px" id="username"></td>
+            <td>
+                <button class="btn btn-primary btn-xs" role="button" onclick="SetUserImg('username');">修改</button>
+            </td>
+        </tr>
+        <tr height="40px">
+            <td width="60px">手机号码</td>
+            <td width="120px" id="photo"></td>
+            <td>
+                <button class="btn btn-primary btn-xs" role="button" onclick="SetUserImg('photo');">修改</button>
+            </td>
+        </tr>
+        <tr height="80px">
+        <td>
+            <td >
+                <button type="button" class="btn btn-danger" onclick="SetUserImg('del');">注销账户</button>
+            </td>
+        </td>
+        </tr>
+    </table>
+</div>
+<div id="change_win" class="easyui-window" title="修改" style="width:450px;height: 200px"
+     data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true">
+    <form method="post" id="f">
+        <div align="center">
+            <div class="input-group">
+                <span class="input-group-addon" style="width: 100px"><strong id="change_name">用户名</strong></span>
+                <input type="text" class="form-control" id="change_value" name="change_value" aria-describedby="basic-addon3" style="width: 250px">
+            </div><br><br>
+            <a id="btn" class="easyui-linkbutton" icon="icon-save" href="javascript:void(0)"
+               onclick="update();">提交</a>
+            <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)"
+               onclick="closedUpdate();">取消</a>
+        </div>
+    </form>
+</div>
+<script>
+    $('#user_win').panel({
+        width: 500,
+        height: 400,
+        title: '店铺信息'
+    });
+    function initSellerMsg() {
+        $.ajax({
+            url: '/admin/usercenter/getinfo',
+            success: function (msg) {
+                $("#username").html(msg.windowname);
+                $("#photo").html(msg.phonenumber);
+                $("#user_img").html('<img src="' + msg.windowimg + '" width="100px" height="100px"/>');
+            }
+        });
+    }
+    initSellerMsg();
+    var currentState;
+    function SetUserImg(flag) {
+        $("#change_value").val();
+        if (flag == 'photo') {
+            currentState = 'phone';
+            $("#f").removeAttr("enctype");
+            $("#change_value").attr("type", "text");
+            $("#change_name").html('请输入新的手机号码:');
+        } else if (flag == 'username') {
+            currentState = 'username';
+            $("#f").removeAttr("enctype");
+            $("#change_value").attr("type", "text");
+            $("#change_name").html('请输入新的店铺名称:');
+        } else if (flag == 'user_img') {
+            currentState = 'user_img';
+            $("#f").attr("enctype", "multipart/form-data");
+            $("#change_value").attr("type", "file");
+            $("#change_name").html('请选择新的图片:');
+        } else if (flag == 'del') {
+            $.messager.confirm('提示', '账户注销后将不能再使用，确定注销账户吗?', function (chose) {
+                if (chose) {
+                    $.ajax({
+                        url: '/admin/usercenter/disableaccount',
+                        success: function (msg) {
+                            $.messager.alert("提示", msg.msg, null, function () {
+                                if (msg.status === 'ok') {
+                                    top.location.href = 'seller_login.html'
+                                }
+                            })
+                        }
+                    });
+                }
+            });
+            return;
+        }
+        $("#change_win").window("open");
+    }
+    function update() {
+        var change_value = $("#change_value").val();
+        if (currentState != 'user_img') {
+            $('#f').form('submit', {
+                url: '/admin/usercenter/modifyinfo',
+                onSubmit: function () {
+                    if (currentState == 'phone') {
+                        //TODO 检测电话号码长度而不是值
+                        if (change_value == '' || change_value.length != 11) {
+                            $.messager.alert('提示', '请输入正确的手机号码');
+                            return false;
+                        }
+                        $("#change_value").attr("name", "phone");
+                    } else if (currentState == 'username') {
+                        if (change_value == '') {
+                            $.messager.alert('提示', '店铺名不能为空');
+                            return false;
+                        }
+                        $("#change_value").attr("name", "user_name");
+                    }
+                },
+                success: function (data) {
+                    var msg = JSON.parse(data);
+                    $.messager.alert("提示", msg.msg, null, function () {
+                        if (msg.status === 'ok') {
+                            initSellerMsg();
+                        }
+                        $("#update_win").window("close");
+                    })
+                }
+            });
+        } else {
+            $("#change_value").attr("name", "user_img");
+            console.log("000000000000000000000");
+            $('#f').form('submit', {
+                url: '/admin/usercenter/modifypic',
+                onSubmit: function () {
+                    if(change_value.length==0) {
+                        $.messager.alert("提示","图片不可以为空");
+                        return false;
+                    }
+                },
+                success: function (data) {
+                    var jsonData = JSON.parse(data);
+                    $.messager.alert("提示",jsonData.msg,null,function () {
+                        if (jsonData.status === 'ok') {
+                            initSellerMsg();
+                        }
+                        $("#change_win").window("close");
+                    });
+                }
+            });
+        }
+    }
+    function closedUpdate() {
+        $("#change_win").window("close");
+    }
+</script>
+</body>
+</html>

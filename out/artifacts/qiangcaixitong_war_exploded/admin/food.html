@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜品管理</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<table id="foodDataGrid"></table>
+<div id="win" class="easyui-window" title="添加菜品" style="width:400px;height:200px"
+     data-options="iconCls:'icon-save',modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true">
+    <form id="saveFoodForm" enctype="multipart/form-data" method="post" action="/Restaurant/addFood">
+        <table align="center">
+            <tr>
+                <td>美食名称:</td>
+                <td><input type="hidden" name="fid" id="fid"><input type="text" name="foodName" id="foodName"></td>
+            </tr>
+            <tr>
+                <td>美食价格:</td>
+                <td><input type="text" name="foodPrice" id="foodPrice"></td>
+            </tr>
+            <tr>
+                <td>计价方式:</td>
+                <td><input type="text" name="priceType" id="priceType"></td>
+            </tr>
+            <tr>
+                <td>美食图片:</td>
+                <td><input type="file" name="foodImg" id="foodImg" accept="image/jpeg,image/png"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center" style="text-align: center">
+                    <a id="confirmBtn" class="easyui-linkbutton" icon="icon-save" href="javascript:void(0)"
+                       onclick="saveFood();">提交</a>
+                    <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)"
+                       onclick="cancelFood();">取消</a>
+                    <!--<input type="submit" value="保存">-->
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="menu" class="easyui-menu" style="width: 30px; display: none;">
+    <!--放置一个隐藏的菜单Div-->
+    <div id="btn_Delete" data-options="iconCls:'icon-remove'">删除</div>
+    <!--具体的菜单事件请自行添加，跟toolbar的方法是基本一样的-->
+    <div id="btn_Modify" data-options="iconCls:'icon-edit'" onclick="">编辑</div>
+</div>
+<script>
+    $(function () {
+        $("#foodDataGrid").datagrid({
+            url: '/admin/manageVegetables/list.json',
+            iconCls: 'icon-save',
+            striped: "true",
+            pagination: 'true',
+            pageSize: 4,
+            pageList: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
+            fit: true,
+            fitColumns: true,
+            nowrap: false,
+            border: false,
+            isField: 'id',
+            sortName: 'id',
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '添加',
+                handler: function () {
+                    currentState = 'save';
+                    $("#win").window({
+                        title: '添加美食'
+                    });
+                    $("#fid").val(0);
+                    $('#win').window('open');
+                }
+            }, '-', {
+                iconCls: 'icon-remove',
+                text: '删除',
+                handler: function () {
+                    removeItem();
+                }
+            }, '-', {
+                iconCls: 'icon-edit',
+                text: '修改',
+                handler: function () {
+                    currentState = 'update';
+                    modifyItem();
+                }
+            }],
+            sortOrder: 'asc',
+            columns: [[{title: '编号', field: 'id', width: 30, sortable: 'true'},
+                {
+                    title: '菜品图片',
+                    field: 'foodimg',
+                    align: 'center',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return '<img width="90px" height="90px" src="' + row.foodimg + '" />';
+                    }
+                },
+                {title: '菜品名称', field: 'foodname', width: 100, sortable: 'true'},
+                {title: '菜品价格', field: 'foodprice', width: 100, sortable: 'true'},
+                {title: '价格类型', field: 'pricetype', width: 100, sortable: 'true'}]]
+        });
+    });
+</script>
+<script>
+    var currentState;
+    //DataGrid右键菜单代码：
+    $("#foodDataGrid").datagrid({
+        onRowContextMenu: function (e, rowIndex, rowData) { //右键时触发事件
+            //三个参数：e里面的内容很多，真心不明白，rowIndex就是当前点击时所在行的索引，rowData当前行的数据
+            e.preventDefault(); //阻止浏览器捕获右键事件
+            $(this).datagrid("clearSelections"); //取消所有选中项
+            $(this).datagrid("selectRow", rowIndex); //根据索引选中该行
+            $('#menu').menu('show', {
+                //显示右键菜单
+                left: e.pageX,//在鼠标点击处显示菜单
+                top: e.pageY
+            });
+            e.preventDefault();  //阻止浏览器自带的右键菜单弹出
+        }
+    });
+    function saveFood() {
+        $('#saveFoodForm').form('submit', {
+            url: '/admin/manageVegetables/add',
+            onSubmit: function () {
+                if (currentState == 'save') {
+                    if ($("#foodName").val().length < 1 || $("#foodPrice").val().length < 1 || $("#priceType").val().length < 1 || $("#foodImg").val().length < 1) {
+                        $.messager.alert("提示", "所有字段都为必填项");
+                        return false;
+                    }
+                }
+            },
+            success: function (data) {
+                var jsonData = JSON.parse(data);
+                $.messager.alert("提示", jsonData.msg, null, function () {
+                    if (jsonData.status === 'ok') {
+                        $('#win').window('close');
+                        $('#foodDataGrid').datagrid('reload');
+                    }
+                });
+            }
+        });
+    }
+    function cancelFood() {
+        $('#win').window('close');
+    }
+    $("#btn_Delete").click(function () {
+        removeItem();
+    });
+    $("#btn_Modify").click(function () {
+        modifyItem();
+    });
+    function modifyItem() {
+        var selections = $("#foodDataGrid").datagrid("getSelections");
+        if (selections.length == 0) {
+            $.messager.alert("提示", "请选中一个美食进行修改");
+        } else if (selections.length > 1) {
+            $.messager.alert("提示", "一次只能修改一个条目");
+        } else {
+            $("#win").window({
+                title: '修改美食'
+            });
+            $('#win').window('open');
+            var selection = selections[0];
+            $("#foodName").attr("name","foodName1");
+            $("#foodPrice").attr("name","foodPrice1");
+            $("#foodType").attr("name","foodType1");
+            $("#fid").attr("name","fid1");
+            $("#foodName").val(selection.foodname);
+            $("#foodPrice").val(selection.foodprice);
+            $("#priceType").val(selection.pricetype);
+            $("#fid1").val(selection.id);
+            //$("#foodName").val(selection.foodname);
+            //$("#foodPrice").val(selection.foodprice);
+            //$("#priceType").val(selection.pricetype);
+            //$("#fid").val(selection.id);
+        }
+    }
+    function removeItem() {
+        var selections = $("#foodDataGrid").datagrid("getSelections");
+        if(selections.length==0){
+            $.messager.alert("提示","请选择要删除的数据!");
+            return;
+        }
+        var deleteId = '';
+        $.each(selections, function (index, ele) {
+            deleteId += ele.id + ',';
+        });
+        $.messager.confirm("提示", "确定删除" + selections.length + "条数据?", function (r) {
+            if (r) {
+                console.log({deleteId: deleteId});
+                $.ajax({
+                    url: '/admin/manageVegetables/delete',
+                    type: 'post',
+                    data: {deleteId: deleteId},
+                    success: function (msg) {
+                        $.messager.alert("提示", msg.msg, null, function () {
+                            if (msg.state === 'ok') {
+                                $('#foodDataGrid').datagrid('reload');
+                            }
+                        });
+                    }
+                });
+            }
+        })
+    }
+</script>
+
+</body>
+</html>

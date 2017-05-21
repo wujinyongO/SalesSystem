@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>买菜用户注册页面</title>
+    <link rel="stylesheet" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" href="/static/easyui/themes/icon.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/jquery-3.2.0.js"></script>
+    <script src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+<div id="cc" class="easyui-layout" fit="true">
+    <div data-options="region:'north',split:true" style="height:100px;overflow: hidden;text-align:center; ">
+        <h style="font-size:25px;">买菜系统客户注册</h>
+    </div>
+    <div data-options="region:'south',split:true" style="height:100px;overflow: hidden"></div>
+    <div data-options="region:'center'" style="padding:5px;background:#eee;">
+
+        <div align="center">
+            <div id="p" align="center">
+                <form name="ff" id="ff" method="post" enctype="multipart/form-data">
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 100px">用户名</span>
+                                    <input name="username" type="text" class="form-control" id="username"
+                                           aria-describedby="basic-addon3" style="width: 250px">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 100px">密码</span>
+                                    <input name="password" type="password" class="form-control" id="password"
+                                           aria-describedby="basic-addon3" style="width: 250px">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 100px">确认密码</span>
+                                    <input type="password" class="form-control" id="password_confirm"
+                                           aria-describedby="basic-addon3" style="width: 250px">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 100px">手机号码</span>
+                                    <input type="text" name="phoneNumber" class="form-control" id="phoneNumber"
+                                           aria-describedby="basic-addon3" style="width: 250px">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 100px">头像</span>
+                                    <input type="file" name="winImg" class="form-control" id="winImg"
+                                           aria-describedby="basic-addon3" style="width: 250px">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <div align="center">
+                                    <button type="button" id="regBtn" class="btn btn-primary">注册</button>
+                                    <button type="reset" id='reset' class="btn btn-primary">重置</button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $('#p').panel({
+        width: 500,
+        height: 400,
+        title: '注册'
+    });
+    $("#regBtn").click(function () {
+        $('#ff').form('submit', {
+            url: '/CustomerRegist',
+            onSubmit: function () {
+                //这里做数据校验
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var password_confirm = $("#password_confirm").val();
+                var phoneNumber = $("#phoneNumber").val();
+                var winImg = $('#winImg').val();
+                if (username.length == 0 || password.length == 0 || password_confirm.length == 0 || phoneNumber.length == 0 || winImg.length == 0) {
+                    $.messager.alert('提示', '所有字段都为必填字段');
+                    return false;//返回false之后，数据将不会被提交到服务器上
+                }
+                if (password_confirm != password) {
+                    $.messager.alert('提示', '两次输入密码不一致');
+                    return false;//返回false之后，数据将不会被提交到服务器上
+                }
+                if (phoneNumber.length != 11) {
+                    $.messager.alert('提示', '请输入正确的手机号码');
+                    return false;//返回false之后，数据将不会被提交到服务器上
+                }
+                else {
+                    for (var i = 0; i < phoneNumber.length; i++) {
+                        if (phoneNumber[i] < '0' || phoneNumber[i] > '9') {
+                            $.messager.alert('提示', '请输入正确的手机号码');
+                            return false;
+                        }
+                    }
+                }
+            },
+            success: function (data) {
+                var jsonData = JSON.parse(data);
+                $.messager.alert('提示', jsonData.msg, null, function () {
+                    if (jsonData.status === 'ok') {
+                        location.href = 'userLogin.html';
+                    }
+                });
+            }
+        });
+    });
+
+
+</script>
+</html>
